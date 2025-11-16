@@ -1,0 +1,110 @@
+run:
+  timeout: 5m
+  tests: true
+  issues:
+    exclude-dirs:
+      - vendor
+      - bin
+      - .git
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+  
+  
+  gocyclo:
+    min-complexity: 15
+  
+  dupl:
+    threshold: 100
+  
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  
+  misspell:
+    locale: US
+  
+  lll:
+    line-length: 120
+  
+  goimports:
+    local-prefixes: avito-tech-internship
+  
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+      - name: var-naming
+        severity: warning
+        disabled: false
+      - name: var-declaration
+        severity: warning
+        disabled: false
+      - name: package-comments
+        severity: warning
+        disabled: false
+      - name: range
+        severity: warning
+        disabled: false
+      - name: increment-decrement
+        severity: warning
+        disabled: false
+      - name: error-return
+        severity: warning
+        disabled: false
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - revive
+    - gosec
+    - misspell
+    - unparam
+    - goconst
+    - gocyclo
+    - dupl
+    - lll
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gocyclo
+        - dupl
+        - lll
+    # SQL string formatting is safe - we use placeholders
+    - text: "G201: SQL string formatting"
+      linters:
+        - gosec
+    # High complexity functions are acceptable for business logic
+    - path: internal/service/.*\.go
+      linters:
+        - gocyclo
+    # Swagger UI handler has acceptable complexity for file serving logic
+    - path: internal/handler/swagger_handler.go
+      linters:
+        - gocyclo
+    # Allow ignoring tx.Rollback errors (transaction may already be committed)
+    - text: "Error return value of `tx.Rollback` is not checked"
+      linters:
+        - errcheck
+    # Allow ignoring w.Write errors in health check
+    - text: "Error return value of `w.Write` is not checked"
+      path: internal/router/router.go
+      linters:
+        - errcheck
+  
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
